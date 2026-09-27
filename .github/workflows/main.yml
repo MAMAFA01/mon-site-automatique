@@ -1,0 +1,37 @@
+name: Mon Usine Automatique
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  construire-et-publier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Etape 1 - Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Etape 2 - Installer la machine Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Etape 3 - Installer la liste de courses
+        run: pip install -r requirements.txt
+
+      - name: Etape 4 - Faire tourner l'usine !
+        run: python script.py
+
+      - name: Etape 5 - Préparer la vitrine
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Etape 6 - Publier sur internet
+        uses: actions/deploy-pages@v4
